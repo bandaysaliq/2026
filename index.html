@@ -10,9 +10,11 @@
   --bg-soft:#121212;
   --dot-off:#1f1f1f;
   --dot-on:#ffffff;
-  --main:#ffffff;
-  --sub:#9a9a9a;
-  --accent:#d4c27a;
+
+  --white:#ffffff;
+  --muted:#9a9a9a;
+  --accent:#d4c27a;   /* gold accent */
+  --cool:#8fb3c9;     /* calm blue for days */
 }
 
 *{box-sizing:border-box}
@@ -22,7 +24,7 @@ body{
   height:100vh;
   background:radial-gradient(circle at top,var(--bg-soft),var(--bg));
   font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-  color:var(--main);
+  color:var(--white);
   display:flex;
   align-items:center;
   justify-content:center;
@@ -41,14 +43,15 @@ body{
   white-space:nowrap;
 }
 
-.q-tl{top:22px; left:40px; color:#eaeaea;}
+.q-tl{top:22px; left:40px;}
 .q-tc{top:22px; left:50%; transform:translateX(-50%); color:var(--accent);}
-.q-tr{top:22px; right:40px; color:#eaeaea;}
+.q-tr{top:22px; right:40px;}
 
 .q-bl{bottom:24px; left:40px; color:var(--accent);}
-.q-br{bottom:24px; right:40px; color:#eaeaea;}
+.q-bc{bottom:24px; left:50%; transform:translateX(-50%);}
+.q-br{bottom:24px; right:40px;}
 
-/* ===== CENTER BLOCK ===== */
+/* ===== CENTER ===== */
 .center{
   display:flex;
   flex-direction:column;
@@ -77,34 +80,48 @@ body{
 
 /* ===== TEXT ===== */
 .percent{
-  font-size:58px;
+  font-size:60px;
   font-weight:900;
-  letter-spacing:.9px;
+  letter-spacing:1px;
+}
+
+.percent .num{
+  color:var(--accent);
+}
+
+.percent .year{
+  color:var(--white);
 }
 
 .days{
-  margin-top:8px;
+  margin-top:10px;
   font-size:18px;
-  font-weight:500;
-  color:var(--sub);
-  letter-spacing:.4px;
+  font-weight:600;
+  color:var(--cool);
+  letter-spacing:.5px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- QUOTES -->
+<!-- 6 QUOTES -->
 <div class="quote q-tl">Never give up.</div>
 <div class="quote q-tc">In my mind, I am always the best.</div>
 <div class="quote q-tr">Just do it.</div>
 
-<div class="quote q-bl">Hard work beats talent when talent doesn’t work hard.</div>
+<div class="quote q-bl">Hard work beats talent, when talent doesn’t work hard.</div>
+<div class="quote q-bc">Someone don't like me — maybe because I’m too good.</div>
 <div class="quote q-br">Everything is possible — just believe.</div>
 
 <div class="center">
   <div class="grid" id="grid"></div>
-  <div class="percent" id="percent"></div>
+
+  <div class="percent">
+    <span class="num" id="percentNum"></span>
+    <span class="year"> of 2026</span>
+  </div>
+
   <div class="days" id="days"></div>
 </div>
 
@@ -113,7 +130,7 @@ body{
 
 const TOTAL_DAYS = 365;
 
-// Local calendar day index (bulletproof)
+// Local calendar day index
 function dayIndex(d){
   return Math.floor(
     new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime() / 86400000
@@ -128,9 +145,7 @@ const daysRemaining = TOTAL_DAYS - daysPassed;
 const percent = ((daysPassed / TOTAL_DAYS) * 100).toFixed(2);
 
 // Update text
-document.getElementById("percent").textContent =
-  `${percent}% of 2026`;
-
+document.getElementById("percentNum").textContent = percent + "%";
 document.getElementById("days").textContent =
   `${daysRemaining} days remaining`;
 
