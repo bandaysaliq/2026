@@ -30,10 +30,9 @@ body{
   overflow:hidden;
 }
 
-/* ===== TOP QUOTES (HORIZONTAL – AS YOU MARKED) ===== */
+/* ===== QUOTES ===== */
 .quote{
   position:absolute;
-  top:22px;
   font-size:15px;
   font-weight:800;
   letter-spacing:1.4px;
@@ -42,15 +41,12 @@ body{
   white-space:nowrap;
 }
 
-.quote.left{
-  left:40px;
-  color:#eaeaea;
-}
+.q-tl{top:22px; left:40px; color:#eaeaea;}
+.q-tc{top:22px; left:50%; transform:translateX(-50%); color:var(--accent);}
+.q-tr{top:22px; right:40px; color:#eaeaea;}
 
-.quote.right{
-  right:40px;
-  color:var(--accent);
-}
+.q-bl{bottom:24px; left:40px; color:var(--accent);}
+.q-br{bottom:24px; right:40px; color:#eaeaea;}
 
 /* ===== CENTER BLOCK ===== */
 .center{
@@ -62,7 +58,7 @@ body{
 /* ===== DOT GRID ===== */
 .grid{
   display:grid;
-  grid-template-columns:repeat(25, 12px);
+  grid-template-columns:repeat(25,12px);
   gap:7px;
   margin-bottom:46px;
 }
@@ -98,8 +94,13 @@ body{
 
 <body>
 
-<div class="quote left" id="quoteLeft"></div>
-<div class="quote right" id="quoteRight"></div>
+<!-- QUOTES -->
+<div class="quote q-tl">Never give up.</div>
+<div class="quote q-tc">In my mind, I am always the best.</div>
+<div class="quote q-tr">Just do it.</div>
+
+<div class="quote q-bl">Hard work beats talent when talent doesn’t work hard.</div>
+<div class="quote q-br">Everything is possible — just believe.</div>
 
 <div class="center">
   <div class="grid" id="grid"></div>
@@ -108,11 +109,11 @@ body{
 </div>
 
 <script>
-/* ========= PERFECT DATE ENGINE (LOCAL, DAY-BASED) ========= */
+/* ===== PERFECT LIVE DATE ENGINE ===== */
 
 const TOTAL_DAYS = 365;
 
-// Normalize to local midnight → no timezone bugs
+// Local calendar day index (bulletproof)
 function dayIndex(d){
   return Math.floor(
     new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime() / 86400000
@@ -133,35 +134,15 @@ document.getElementById("percent").textContent =
 document.getElementById("days").textContent =
   `${daysRemaining} days remaining`;
 
-/* ========= DOTS = DAYS (1 DAY = 1 DOT) ========= */
-
+/* ===== DOTS = DAYS ===== */
 const grid = document.getElementById("grid");
 grid.innerHTML = "";
 
 for(let i=0;i<TOTAL_DAYS;i++){
-  const dot = document.createElement("div");
-  dot.className = "dot" + (i < daysPassed ? " filled" : "");
+  const dot=document.createElement("div");
+  dot.className="dot"+(i<daysPassed?" filled":"");
   grid.appendChild(dot);
 }
-
-/* ========= QUOTES (YOUR EXACT VIBE) ========= */
-
-const quotes = [
-  "Never give up.",
-  "In my mind, I am always the best.",
-  "Maybe someone dont like me — maybe because I’m too good.",
-  "Hard work beats talent when talent doesn’t work hard.",
-  "Just do it.",
-  "Everything is possible — just believe."
-];
-
-// Pick two DIFFERENT quotes
-let a = Math.floor(Math.random()*quotes.length);
-let b;
-do{ b = Math.floor(Math.random()*quotes.length); } while(b === a);
-
-document.getElementById("quoteLeft").textContent = quotes[a];
-document.getElementById("quoteRight").textContent = quotes[b];
 </script>
 
 </body>
