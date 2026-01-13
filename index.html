@@ -8,13 +8,15 @@
 :root{
   --bg:#0a0a0a;
   --bg-soft:#121212;
+
   --dot-off:#1f1f1f;
   --dot-on:#ffffff;
 
   --white:#ffffff;
   --muted:#9a9a9a;
-  --accent:#d4c27a;   /* gold accent */
-  --cool:#8fb3c9;     /* calm blue for days */
+  --gold:#d4c27a;
+  --cool:#8fb3c9;
+  --neon:#5FFBF1; /* NEW COLOR for % */
 }
 
 *{box-sizing:border-box}
@@ -32,24 +34,27 @@ body{
   overflow:hidden;
 }
 
-/* ===== QUOTES ===== */
+/* ===== QUOTES (FIXED SPACING, NO OVERLAP) ===== */
 .quote{
   position:absolute;
-  font-size:15px;
-  font-weight:800;
-  letter-spacing:1.4px;
-  opacity:.85;
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:1.2px;
+  opacity:.82;
   text-transform:uppercase;
-  white-space:nowrap;
+  max-width:28%;
+  text-align:center;
 }
 
-.q-tl{top:22px; left:40px;}
-.q-tc{top:22px; left:50%; transform:translateX(-50%); color:var(--accent);}
-.q-tr{top:22px; right:40px;}
+/* TOP */
+.q-tl{top:22px; left:30px; text-align:left;}
+.q-tc{top:22px; left:50%; transform:translateX(-50%); color:var(--gold);}
+.q-tr{top:22px; right:30px; text-align:right;}
 
-.q-bl{bottom:24px; left:40px; color:var(--accent);}
-.q-bc{bottom:24px; left:50%; transform:translateX(-50%);}
-.q-br{bottom:24px; right:40px;}
+/* BOTTOM */
+.q-bl{bottom:26px; left:30px; color:var(--gold); text-align:left;}
+.q-bc{bottom:26px; left:50%; transform:translateX(-50%);}
+.q-br{bottom:26px; right:30px; text-align:right;}
 
 /* ===== CENTER ===== */
 .center{
@@ -61,57 +66,66 @@ body{
 /* ===== DOT GRID ===== */
 .grid{
   display:grid;
-  grid-template-columns:repeat(25,12px);
-  gap:7px;
-  margin-bottom:46px;
+  grid-template-columns:repeat(25,11px);
+  gap:6px;
+  margin-bottom:42px;
 }
 
 .dot{
-  width:12px;
-  height:12px;
+  width:11px;
+  height:11px;
   border-radius:50%;
   background:var(--dot-off);
 }
 
 .dot.filled{
   background:var(--dot-on);
-  box-shadow:0 0 7px rgba(255,255,255,.65);
+  box-shadow:0 0 6px rgba(255,255,255,.6);
 }
 
 /* ===== TEXT ===== */
 .percent{
-  font-size:60px;
+  font-size:52px;
   font-weight:900;
-  letter-spacing:1px;
+  letter-spacing:.9px;
 }
 
 .percent .num{
-  color:var(--accent);
+  color:var(--neon);
 }
 
 .percent .year{
   color:var(--white);
 }
 
+.score{
+  margin-top:4px;
+  font-size:14px;
+  font-weight:700;
+  color:var(--muted);
+  letter-spacing:.6px;
+}
+
 .days{
-  margin-top:10px;
-  font-size:18px;
+  margin-top:8px;
+  font-size:16px;
   font-weight:600;
   color:var(--cool);
-  letter-spacing:.5px;
+  letter-spacing:.4px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- 6 QUOTES -->
+<!-- TOP QUOTES -->
 <div class="quote q-tl">Never give up.</div>
 <div class="quote q-tc">In my mind, I am always the best.</div>
 <div class="quote q-tr">Just do it.</div>
 
-<div class="quote q-bl">Hard work beats talent, when talent doesn’t work hard.</div>
-<div class="quote q-bc">Someone don't like me — maybe because I’m too good.</div>
+<!-- BOTTOM QUOTES -->
+<div class="quote q-bl">Hard work beats talent when talent doesn’t work hard.</div>
+<div class="quote q-bc">Someone don’t like me — maybe because I’m too good.</div>
 <div class="quote q-br">Everything is possible — just believe.</div>
 
 <div class="center">
@@ -122,15 +136,15 @@ body{
     <span class="year"> of 2026</span>
   </div>
 
+  <div class="score">TARGET · 500/500</div>
   <div class="days" id="days"></div>
 </div>
 
 <script>
-/* ===== PERFECT LIVE DATE ENGINE ===== */
+/* ===== LIVE DATE ENGINE (FINAL) ===== */
 
 const TOTAL_DAYS = 365;
 
-// Local calendar day index
 function dayIndex(d){
   return Math.floor(
     new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime() / 86400000
@@ -144,12 +158,11 @@ const daysPassed = Math.max(0, dayIndex(today) - dayIndex(start));
 const daysRemaining = TOTAL_DAYS - daysPassed;
 const percent = ((daysPassed / TOTAL_DAYS) * 100).toFixed(2);
 
-// Update text
 document.getElementById("percentNum").textContent = percent + "%";
 document.getElementById("days").textContent =
   `${daysRemaining} days remaining`;
 
-/* ===== DOTS = DAYS ===== */
+/* DOTS = DAYS */
 const grid = document.getElementById("grid");
 grid.innerHTML = "";
 
