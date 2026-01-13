@@ -1,46 +1,84 @@
-Build a minimal, ultra-clean live wallpaper webpage for a laptop.
-The wallpaper must show 2026 year progress in three forms:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>2026 Progress</title>
+<style>
+    body {
+        margin: 0;
+        background: #0b0b0b;
+        color: #ffffff;
+        font-family: Arial, Helvetica, sans-serif;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        overflow: hidden;
+    }
 
-Percentage of 2026 completed (auto-updating in real time)
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(20, 12px);
+        gap: 6px;
+        margin-bottom: 30px;
+    }
 
-Exact number of days left in 2026
+    .dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #2a2a2a;
+    }
 
-A dot-matrix grid where dots fill progressively based on the percentage passed (dark background, white dots, modern aesthetic like a futuristic time-tracker).
+    .dot.filled {
+        background: #ffffff;
+    }
 
-Design requirements:
+    .percent {
+        font-size: 36px;
+        margin-bottom: 8px;
+    }
 
-Black / very dark background
+    .days {
+        font-size: 16px;
+        opacity: 0.8;
+    }
+</style>
+</head>
+<body>
 
-Minimal, Apple-level UI
+<div class="grid" id="grid"></div>
 
-Dot grid centered on screen
+<div class="percent" id="percent"></div>
+<div class="days" id="days"></div>
 
-Large percentage text below grid
+<script>
+    const start = new Date("2026-01-01T00:00:00");
+    const end = new Date("2027-01-01T00:00:00");
+    const now = new Date();
 
-Days-left text below percentage
+    const total = end - start;
+    const passed = now - start;
 
-Responsive for laptop screens
+    let percent = Math.max(0, Math.min(100, (passed / total) * 100));
+    percent = percent.toFixed(2);
 
-No external libraries
+    const daysLeft = Math.max(0, Math.ceil((end - now) / (1000 * 60 * 60 * 24)));
 
-Pure HTML + CSS + JavaScript in a single index.html file
+    document.getElementById("percent").textContent = percent + "% of 2026";
+    document.getElementById("days").textContent = daysLeft + " days left in 2026";
 
-Logic requirements:
+    const totalDots = 200;
+    const filledDots = Math.round((percent / 100) * totalDots);
+    const grid = document.getElementById("grid");
 
-Start date: January 1, 2026 00:00
+    for (let i = 0; i < totalDots; i++) {
+        const dot = document.createElement("div");
+        dot.className = "dot" + (i < filledDots ? " filled" : "");
+        grid.appendChild(dot);
+    }
+</script>
 
-End date: January 1, 2027 00:00
-
-Automatically calculates progress and days remaining
-
-Fills dot grid proportionally
-
-Updates on page refresh (or optionally every minute)
-
-Output requirements:
-
-Provide complete, ready-to-host index.html code
-
-Clean, readable, commented code
-
-Optimized to be used as a live wallpaper via a website URL (GitHub Pages / Lively Wallpaper compatible)
+</body>
+</html>
