@@ -2,18 +2,17 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>2026 Progress</title>
+<title>2026 Countdown</title>
 
 <style>
 :root{
   --bg:#0a0a0a;
-  --bg-glow:#141414;
-  --dot-off:#1e1e1e;
+  --bg-soft:#121212;
+  --dot-off:#1f1f1f;
   --dot-on:#ffffff;
   --main:#ffffff;
-  --sub:#9c9c9c;
-  --quote-left:#eaeaea;
-  --quote-right:#c8b88a;
+  --sub:#9a9a9a;
+  --accent:#d4c27a;
 }
 
 *{box-sizing:border-box}
@@ -21,7 +20,7 @@
 body{
   margin:0;
   height:100vh;
-  background:radial-gradient(circle at top,var(--bg-glow),var(--bg));
+  background:radial-gradient(circle at top,var(--bg-soft),var(--bg));
   font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   color:var(--main);
   display:flex;
@@ -31,34 +30,41 @@ body{
   overflow:hidden;
 }
 
-/* SIDE QUOTES */
+/* ===== TOP QUOTES (HORIZONTAL – AS YOU MARKED) ===== */
 .quote{
   position:absolute;
-  top:50%;
-  transform:translateY(-50%);
-  writing-mode:vertical-rl;
-  text-transform:uppercase;
+  top:22px;
   font-size:15px;
   font-weight:800;
-  letter-spacing:1.6px;
-  opacity:.75;
+  letter-spacing:1.4px;
+  opacity:.85;
+  text-transform:uppercase;
+  white-space:nowrap;
 }
 
-.quote.left{left:28px;color:var(--quote-left)}
-.quote.right{right:28px;color:var(--quote-right)}
+.quote.left{
+  left:40px;
+  color:#eaeaea;
+}
 
+.quote.right{
+  right:40px;
+  color:var(--accent);
+}
+
+/* ===== CENTER BLOCK ===== */
 .center{
   display:flex;
   flex-direction:column;
   align-items:center;
 }
 
-/* DOT GRID */
+/* ===== DOT GRID ===== */
 .grid{
   display:grid;
-  grid-template-columns:repeat(20,12px);
-  gap:8px;
-  margin-bottom:44px;
+  grid-template-columns:repeat(25, 12px);
+  gap:7px;
+  margin-bottom:46px;
 }
 
 .dot{
@@ -70,19 +76,19 @@ body{
 
 .dot.filled{
   background:var(--dot-on);
-  box-shadow:0 0 8px rgba(255,255,255,.65);
+  box-shadow:0 0 7px rgba(255,255,255,.65);
 }
 
-/* TEXT */
+/* ===== TEXT ===== */
 .percent{
-  font-size:56px;
+  font-size:58px;
   font-weight:900;
-  letter-spacing:.8px;
+  letter-spacing:.9px;
 }
 
 .days{
   margin-top:8px;
-  font-size:17px;
+  font-size:18px;
   font-weight:500;
   color:var(--sub);
   letter-spacing:.4px;
@@ -102,24 +108,21 @@ body{
 </div>
 
 <script>
-/* ========= PERFECT DATE LOGIC (LOCAL, CALENDAR-ONLY) ========= */
-
-// Helper: convert date → day number since epoch (LOCAL, no time)
-function dayNumber(d){
-  return Math.floor(
-    new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime()
-    / 86400000
-  );
-}
+/* ========= PERFECT DATE ENGINE (LOCAL, DAY-BASED) ========= */
 
 const TOTAL_DAYS = 365;
 
-// Local dates only
+// Normalize to local midnight → no timezone bugs
+function dayIndex(d){
+  return Math.floor(
+    new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime() / 86400000
+  );
+}
+
 const today = new Date();
 const start = new Date(2026, 0, 1);
 
-// Correct calendar difference
-const daysPassed = Math.max(0, dayNumber(today) - dayNumber(start));
+const daysPassed = Math.max(0, dayIndex(today) - dayIndex(start));
 const daysRemaining = TOTAL_DAYS - daysPassed;
 const percent = ((daysPassed / TOTAL_DAYS) * 100).toFixed(2);
 
@@ -130,34 +133,35 @@ document.getElementById("percent").textContent =
 document.getElementById("days").textContent =
   `${daysRemaining} days remaining`;
 
-/* DOT GRID */
-const totalDots = 200;
-const filledDots = Math.round((daysPassed / TOTAL_DAYS) * totalDots);
+/* ========= DOTS = DAYS (1 DAY = 1 DOT) ========= */
+
 const grid = document.getElementById("grid");
 grid.innerHTML = "";
 
-for(let i=0;i<totalDots;i++){
-  const dot=document.createElement("div");
-  dot.className="dot"+(i<filledDots?" filled":"");
+for(let i=0;i<TOTAL_DAYS;i++){
+  const dot = document.createElement("div");
+  dot.className = "dot" + (i < daysPassed ? " filled" : "");
   grid.appendChild(dot);
 }
 
-/* QUOTES */
-const quotes=[
+/* ========= QUOTES (YOUR EXACT VIBE) ========= */
+
+const quotes = [
   "Never give up.",
   "In my mind, I am always the best.",
-  "Some people dislike me — maybe because I’m too good.",
+  "Maybe someone dont like me — maybe because I’m too good.",
   "Hard work beats talent when talent doesn’t work hard.",
   "Just do it.",
   "Everything is possible — just believe."
 ];
 
-let a=Math.floor(Math.random()*quotes.length);
+// Pick two DIFFERENT quotes
+let a = Math.floor(Math.random()*quotes.length);
 let b;
-do{b=Math.floor(Math.random()*quotes.length);}while(b===a);
+do{ b = Math.floor(Math.random()*quotes.length); } while(b === a);
 
-document.getElementById("quoteLeft").textContent=quotes[a];
-document.getElementById("quoteRight").textContent=quotes[b];
+document.getElementById("quoteLeft").textContent = quotes[a];
+document.getElementById("quoteRight").textContent = quotes[b];
 </script>
 
 </body>
