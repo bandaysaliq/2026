@@ -1,99 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <title>2026 Progress</title>
 
 <style>
-:root {
-  --bg: #0a0a0a;
-  --dot-off: #1f1f1f;
-  --dot-on: #ffffff;
-  --text-main: #ffffff;
-  --text-sub: #9b9b9b;
+:root{
+  --bg:#0a0a0a;
+  --bg-glow:#141414;
+  --dot-off:#1e1e1e;
+  --dot-on:#ffffff;
+  --main:#ffffff;
+  --sub:#9c9c9c;
+  --quote-left:#eaeaea;
+  --quote-right:#c8b88a;
 }
 
-* { box-sizing: border-box; }
+*{box-sizing:border-box}
 
-body {
-  margin: 0;
-  height: 100vh;
-  background: radial-gradient(circle at top, #141414, var(--bg));
-  color: var(--text-main);
-  font-family: "Inter", -apple-system, BlinkMacSystemFont,
-               "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+body{
+  margin:0;
+  height:100vh;
+  background:radial-gradient(circle at top,var(--bg-glow),var(--bg));
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  color:var(--main);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  overflow:hidden;
+}
+
+/* SIDE QUOTES */
+.quote{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  writing-mode:vertical-rl;
+  text-transform:uppercase;
+  font-size:15px;
+  font-weight:800;
+  letter-spacing:1.6px;
+  opacity:.75;
+}
+
+.quote.left{left:28px;color:var(--quote-left)}
+.quote.right{right:28px;color:var(--quote-right)}
+
+.center{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
 }
 
 /* DOT GRID */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(20, 12px);
-  gap: 8px;
-  margin-bottom: 42px;
+.grid{
+  display:grid;
+  grid-template-columns:repeat(20,12px);
+  gap:8px;
+  margin-bottom:44px;
 }
 
-.dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: var(--dot-off);
+.dot{
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  background:var(--dot-off);
 }
 
-.dot.filled {
-  background: var(--dot-on);
-  box-shadow: 0 0 6px rgba(255,255,255,0.6);
+.dot.filled{
+  background:var(--dot-on);
+  box-shadow:0 0 8px rgba(255,255,255,.65);
 }
 
 /* TEXT */
-.percent {
-  font-size: 52px;
-  font-weight: 700;
-  letter-spacing: 0.6px;
+.percent{
+  font-size:56px;
+  font-weight:900;
+  letter-spacing:.8px;
 }
 
-.days {
-  margin-top: 6px;
-  font-size: 17px;
-  font-weight: 500;
-  color: var(--text-sub);
-  letter-spacing: 0.4px;
+.days{
+  margin-top:8px;
+  font-size:17px;
+  font-weight:500;
+  color:var(--sub);
+  letter-spacing:.4px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="grid" id="grid"></div>
-<div class="percent" id="percent"></div>
-<div class="days" id="days"></div>
+<div class="quote left" id="quoteLeft"></div>
+<div class="quote right" id="quoteRight"></div>
+
+<div class="center">
+  <div class="grid" id="grid"></div>
+  <div class="percent" id="percent"></div>
+  <div class="days" id="days"></div>
+</div>
 
 <script>
-/* ---- TIME-SAFE CALCULATION ---- */
+/* ========= PERFECT DATE LOGIC (LOCAL, CALENDAR-ONLY) ========= */
 
-// Total days in 2026
+// Helper: convert date → day number since epoch (LOCAL, no time)
+function dayNumber(d){
+  return Math.floor(
+    new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime()
+    / 86400000
+  );
+}
+
 const TOTAL_DAYS = 365;
 
-// Today at UTC midnight
-const todayUTC = new Date(Date.UTC(
-  new Date().getUTCFullYear(),
-  new Date().getUTCMonth(),
-  new Date().getUTCDate()
-));
+// Local dates only
+const today = new Date();
+const start = new Date(2026, 0, 1);
 
-// Jan 1, 2026 at UTC midnight
-const startUTC = new Date(Date.UTC(2026, 0, 1));
-
-// Days passed
-const daysPassed = Math.max(
-  0,
-  Math.floor((todayUTC - startUTC) / (1000 * 60 * 60 * 24))
-);
-
-const daysLeft = Math.max(0, TOTAL_DAYS - daysPassed);
+// Correct calendar difference
+const daysPassed = Math.max(0, dayNumber(today) - dayNumber(start));
+const daysRemaining = TOTAL_DAYS - daysPassed;
 const percent = ((daysPassed / TOTAL_DAYS) * 100).toFixed(2);
 
 // Update text
@@ -101,20 +128,36 @@ document.getElementById("percent").textContent =
   `${percent}% of 2026`;
 
 document.getElementById("days").textContent =
-  `${daysLeft} days remaining`;
+  `${daysRemaining} days remaining`;
 
-// Dot grid
+/* DOT GRID */
 const totalDots = 200;
 const filledDots = Math.round((daysPassed / TOTAL_DAYS) * totalDots);
 const grid = document.getElementById("grid");
-
 grid.innerHTML = "";
 
-for (let i = 0; i < totalDots; i++) {
-  const dot = document.createElement("div");
-  dot.className = "dot" + (i < filledDots ? " filled" : "");
+for(let i=0;i<totalDots;i++){
+  const dot=document.createElement("div");
+  dot.className="dot"+(i<filledDots?" filled":"");
   grid.appendChild(dot);
 }
+
+/* QUOTES */
+const quotes=[
+  "Never give up.",
+  "In my mind, I am always the best.",
+  "Some people dislike me — maybe because I’m too good.",
+  "Hard work beats talent when talent doesn’t work hard.",
+  "Just do it.",
+  "Everything is possible — just believe."
+];
+
+let a=Math.floor(Math.random()*quotes.length);
+let b;
+do{b=Math.floor(Math.random()*quotes.length);}while(b===a);
+
+document.getElementById("quoteLeft").textContent=quotes[a];
+document.getElementById("quoteRight").textContent=quotes[b];
 </script>
 
 </body>
